@@ -1,14 +1,22 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
-
-const NoticeSchema = new mongoose.Schema({
-    title:String,
-    desc:String,
-    link:String
+const noticeSchema = new mongoose.Schema({
+  title:String,
+  desc:String,
+  link:String
 })
 
 
 
-export const NoticeModel = mongoose.model("NoticeModel",NoticeSchema)
+const photoSchema = new mongoose.Schema({
+  url: String,
+  name:String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
+export const Photo = mongoose.model("Photo", photoSchema);
+export const Notice = mongoose.model("Notice",noticeSchema)
 
