@@ -21,13 +21,14 @@ const dotenv_1 = require("dotenv");
 const models_1 = require("./db/models");
 const utils_1 = require("./utils");
 const cors_1 = __importDefault(require("cors"));
+const authMiddleware_1 = __importDefault(require("./utils/authMiddleware"));
 (0, dotenv_1.config)();
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 const upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
 mongoose_1.default.connect(process.env.MONGODB_URI || "");
-app.post("/api/photos", upload.single("photo"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/api/photos", authMiddleware_1.default, upload.single("photo"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const photos = yield models_1.Photo.find({});
         if (photos.length >= 10) {
@@ -66,7 +67,7 @@ app.get("/api/getphotos", (req, res) => __awaiter(void 0, void 0, void 0, functi
         res.status(500).send(error);
     }
 }));
-app.delete("/api/deletephoto", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.delete("/api/deletephoto", authMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name } = req.body;
         if (!name) {
@@ -87,7 +88,7 @@ app.delete("/api/deletephoto", (req, res) => __awaiter(void 0, void 0, void 0, f
         res.status(500).json({ success: false });
     }
 }));
-app.post("/api/notice", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/api/notice", authMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { title, desc, link } = req.body;
         const response = yield models_1.Notice.create({
@@ -119,7 +120,7 @@ app.get("/api/notices", (req, res) => __awaiter(void 0, void 0, void 0, function
         });
     }
 }));
-app.delete("/api/noticedelete", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.delete("/api/noticedelete", authMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { _id } = req.body;
         const response = yield models_1.Notice.deleteOne({ _id });

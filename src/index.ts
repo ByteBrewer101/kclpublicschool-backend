@@ -7,6 +7,7 @@ import { config } from "dotenv";
 import { Notice, Photo } from "./db/models";
 import { deletePhoto, uploadPhoto } from "./utils";
 import cors  from "cors";
+import authenticate from "./utils/authMiddleware";
 
 config();
 
@@ -19,7 +20,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 mongoose.connect(process.env.MONGODB_URI || "");
 
-app.post("/api/photos", upload.single("photo"), async (req, res) => {
+app.post("/api/photos", authenticate,upload.single("photo"), async (req, res) => {
   try {
 
     const photos = await Photo.find({})
@@ -71,7 +72,7 @@ app.get("/api/getphotos", async (req, res) => {
 
 
 
-app.delete("/api/deletephoto", async (req, res) => {
+app.delete("/api/deletephoto",authenticate, async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
@@ -94,7 +95,7 @@ app.delete("/api/deletephoto", async (req, res) => {
   }
 });
 
-app.post("/api/notice", async (req, res) => {
+app.post("/api/notice",authenticate, async (req, res) => {
   try {
     const { title, desc, link } = req.body;
 
@@ -132,7 +133,7 @@ try{
 
 })
 
-app.delete("/api/noticedelete",async(req,res)=>{
+app.delete("/api/noticedelete",authenticate,async(req,res)=>{
   try{
     const {_id}=req.body
 
